@@ -1,0 +1,8 @@
+{
+  "name": "bgp-viewer-poc",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "repository": "git@github.com:danielccunha/bgp-viewer-poc.git",
+  "author": "Daniel Cunha <danielcunha54@gmail.com>",
+  "license": "MIT"
+}
