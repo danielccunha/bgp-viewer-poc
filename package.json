@@ -4,5 +4,10 @@
   "main": "dist/server.js",
   "repository": "git@github.com:danielccunha/bgp-viewer-poc.git",
   "author": "Daniel Cunha <danielcunha54@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {
+    "git-commit-msg-linter": "^3.0.0"
+  }
 }
