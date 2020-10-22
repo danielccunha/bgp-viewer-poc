@@ -5,7 +5,9 @@
   "repository": "git@github.com:danielccunha/bgp-viewer-poc.git",
   "author": "Daniel Cunha <danielcunha54@gmail.com>",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev:listener": "tsnd --transpile-only --ignore-watch node_modules --no-notify src/listener.ts"
+  },
   "dependencies": {
     "ws": "^7.3.1"
   },
