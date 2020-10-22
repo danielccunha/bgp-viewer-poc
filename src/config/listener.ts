@@ -3,5 +3,5 @@ interface ListenerConfig {
 }
 
 export default {
-  host: 'rrc21'
+  host: process.env.LISTENER_HOST
 } as ListenerConfig

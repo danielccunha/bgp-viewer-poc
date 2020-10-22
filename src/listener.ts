@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import WebSocket from 'ws'
 
 import listenerConfig from './config/listener'
