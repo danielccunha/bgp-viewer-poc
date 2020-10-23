@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
-export type AutonomousSystem = Document & {
+export type IAutonomousSystem = Document & {
   number: number
   peer: string
   createdAt?: Date

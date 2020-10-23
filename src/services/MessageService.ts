@@ -1,3 +1,7 @@
+import AutonomousSystem, {
+  IAutonomousSystem
+} from '../database/entities/AutonomousSystem'
+
 export interface Message {
   asn: number
   peer: string
@@ -10,15 +14,13 @@ interface Relation {
 }
 
 export class MessageService {
-  process(message: Message): void {
-    const transformed = {
-      ...message,
-      announcements: this.transformAnnouncements(message),
-      neighborhood: this.transformNeighborhood(message)
-    }
+  async process(message: Message): Promise<void> {
+    // 1. Transform path into announcements and neighborhood
+    const announcements = this.transformAnnouncements(message)
+    const neighborhood = this.transformNeighborhood(message)
 
-    // TODO: Store values
-    console.log(transformed)
+    // 2. Store Autonomous System
+    const as = await this.storeAutonomousSystem(message.asn, message.peer)
   }
 
   private transformNeighborhood({ path = [] }: Message): Relation[] {
@@ -50,5 +52,16 @@ export class MessageService {
     }
 
     return announcements
+  }
+
+  private async storeAutonomousSystem(
+    asn: number,
+    peer: string
+  ): Promise<IAutonomousSystem> {
+    return await AutonomousSystem.findOneAndUpdate(
+      { number: asn },
+      { number: asn, peer },
+      { upsert: true, new: true }
+    )
   }
 }
