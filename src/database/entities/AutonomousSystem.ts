@@ -24,7 +24,7 @@ const AutonomousSystemSchema = new Schema(
   }
 )
 
-export default mongoose.model<AutonomousSystem>(
+export default mongoose.model<IAutonomousSystem>(
   'AutonomousSystem',
   AutonomousSystemSchema
 )
