@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import WebSocket from 'ws'
 
+import './database/connection'
 import listenerConfig from './config/listener'
 import { MessageService, Message } from './services/MessageService'
 
