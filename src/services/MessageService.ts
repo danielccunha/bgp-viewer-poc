@@ -1,5 +1,6 @@
 import Announcement from '../database/entities/Announcement'
 import AutonomousSystem from '../database/entities/AutonomousSystem'
+import Neighbor from '../database/entities/Neighbor'
 
 export interface Message {
   asn: number
@@ -26,7 +27,12 @@ export class MessageService {
 
     // 4. Store announcements
     for (const announcement of announcements) {
-      await this.storeAnnouncement(announcement, path)
+      await this.storeAnnouncement(announcement)
+    }
+
+    // 5. Store neighborhood
+    for (const neighbors of neighborhood) {
+      await this.storeNeighbors(neighbors)
     }
   }
 
@@ -69,22 +75,29 @@ export class MessageService {
       await AutonomousSystem.findOneAndUpdate(
         { number: asn },
         { number: asn, peer },
-        { upsert: true, new: true }
+        { upsert: true }
       )
     } catch (error) {
       // Don't need to handle because it's a DUPLICATE KEY error. It seldom happens and it's irrelevant
     }
   }
 
-  private async storeAnnouncement({ from, to }: Relation, path: number[]) {
-    if (typeof from !== 'number') {
-      console.log(from, path)
-    }
-
+  private async storeAnnouncement({ from, to }: Relation) {
     await Announcement.findOneAndUpdate(
       { from, to },
       { from, to },
-      { upsert: true, new: true }
+      { upsert: true }
+    )
+  }
+
+  private async storeNeighbors(relation: Relation) {
+    // Sort ASNs to prevent duplicate values
+    const [from, to] = [relation.from, relation.to].sort()
+
+    await Neighbor.findOneAndUpdate(
+      { from, to },
+      { from, to },
+      { upsert: true }
     )
   }
 }
