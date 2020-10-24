@@ -65,11 +65,15 @@ export class MessageService {
   }
 
   private async storeAutonomousSystem(asn: number, peer: string) {
-    await AutonomousSystem.findOneAndUpdate(
-      { number: asn },
-      { number: asn, peer },
-      { upsert: true, new: true }
-    )
+    try {
+      await AutonomousSystem.findOneAndUpdate(
+        { number: asn },
+        { number: asn, peer },
+        { upsert: true, new: true }
+      )
+    } catch (error) {
+      // Don't need to handle because it's a DUPLICATE KEY error. It seldom happens and it's irrelevant
+    }
   }
 
   private async storeAnnouncement({ from, to }: Relation, path: number[]) {
