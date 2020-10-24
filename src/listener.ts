@@ -20,7 +20,9 @@ const transformMessage = (data: WebSocket.Data): Message => {
 
 ws.onmessage = ({ data }) => {
   const message = transformMessage(data)
-  service.process(message)
+  if (!isNaN(message.asn)) {
+    service.process(message)
+  }
 }
 
 ws.onopen = () => {
