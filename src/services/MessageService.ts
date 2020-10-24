@@ -1,6 +1,5 @@
-import AutonomousSystem, {
-  IAutonomousSystem
-} from '../database/entities/AutonomousSystem'
+import Announcement from '../database/entities/Announcement'
+import AutonomousSystem from '../database/entities/AutonomousSystem'
 
 export interface Message {
   asn: number
@@ -15,15 +14,27 @@ interface Relation {
 
 export class MessageService {
   async process(message: Message): Promise<void> {
-    // 1. Transform path into announcements and neighborhood
-    const announcements = this.transformAnnouncements(message)
-    const neighborhood = this.transformNeighborhood(message)
+    // 1. Normalize path removing AS_SET from path
+    const path = this.normalizePath(message.path)
 
-    // 2. Store Autonomous System
-    const as = await this.storeAutonomousSystem(message.asn, message.peer)
+    // 2. Transform path into announcements and neighborhood
+    const announcements = this.transformAnnouncements(path)
+    const neighborhood = this.transformNeighborhood(path)
+
+    // 3. Store Autonomous System
+    await this.storeAutonomousSystem(message.asn, message.peer)
+
+    // 4. Store announcements
+    for (const announcement of announcements) {
+      await this.storeAnnouncement(announcement, path)
+    }
   }
 
-  private transformNeighborhood({ path = [] }: Message): Relation[] {
+  private normalizePath(path: number[] = []): number[] {
+    return path.filter(asn => typeof asn === 'number')
+  }
+
+  private transformNeighborhood(path: number[]): Relation[] {
     const neighborhood: Relation[] = []
 
     for (let index = 1; index < path.length; index++) {
@@ -36,17 +47,16 @@ export class MessageService {
     return neighborhood
   }
 
-  private transformAnnouncements({ path = [] }: Message): Relation[] {
+  private transformAnnouncements(path: number[]): Relation[] {
     const announcements: Relation[] = []
-    const reversedPath = [...path].reverse()
 
-    for (let fromIdx = 0; fromIdx < path.length - 1; fromIdx++) {
-      const from = reversedPath[fromIdx]
+    for (let fromIdx = path.length - 1; fromIdx > 0; fromIdx--) {
+      const from = path[fromIdx]
 
-      for (let toIdx = fromIdx + 1; toIdx < path.length; toIdx++) {
+      for (let toIdx = fromIdx - 1; toIdx >= 0; toIdx--) {
         announcements.push({
           from,
-          to: reversedPath[toIdx]
+          to: path[toIdx]
         })
       }
     }
@@ -54,13 +64,22 @@ export class MessageService {
     return announcements
   }
 
-  private async storeAutonomousSystem(
-    asn: number,
-    peer: string
-  ): Promise<IAutonomousSystem> {
-    return await AutonomousSystem.findOneAndUpdate(
+  private async storeAutonomousSystem(asn: number, peer: string) {
+    await AutonomousSystem.findOneAndUpdate(
       { number: asn },
       { number: asn, peer },
+      { upsert: true, new: true }
+    )
+  }
+
+  private async storeAnnouncement({ from, to }: Relation, path: number[]) {
+    if (typeof from !== 'number') {
+      console.log(from, path)
+    }
+
+    await Announcement.findOneAndUpdate(
+      { from, to },
+      { from, to },
       { upsert: true, new: true }
     )
   }
