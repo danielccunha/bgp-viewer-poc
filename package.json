@@ -6,7 +6,7 @@
   "author": "Daniel Cunha <danielcunha54@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev:listener": "tsnd --transpile-only --ignore-watch node_modules --no-notify src/listener.ts"
+    "dev:listener": "tsnd --quiet --respawn --transpile-only --ignore-watch node_modules --no-notify src/listener.ts"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
