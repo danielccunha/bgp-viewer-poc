@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 import 'express-async-errors'
 
+import './database/connection'
 import routes from './routes'
 import handleError from './middleware/handleError'
 
