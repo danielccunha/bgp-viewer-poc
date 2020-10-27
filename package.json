@@ -7,15 +7,24 @@
   "license": "MIT",
   "scripts": {
     "dev": "npm-run-all -p dev:*",
-    "dev:listener": "tsnd --quiet --respawn --transpile-only --ignore-watch node_modules --no-notify src/listener.ts"
+    "dev:listener": "tsnd --quiet --respawn --transpile-only --ignore-watch node_modules --no-notify src/listener.ts",
+    "dev:server": "tsnd --quiet --respawn --transpile-only --ignore-watch node_modules --no-notify src/server.ts"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "helmet": "^4.1.1",
     "mongoose": "^5.10.10",
+    "morgan": "^1.10.0",
     "ws": "^7.3.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.8",
+    "@types/express": "^4.17.8",
     "@types/mongoose": "^5.7.36",
+    "@types/morgan": "^1.9.1",
     "@types/node": "^14.14.2",
     "@types/ws": "^7.2.7",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
