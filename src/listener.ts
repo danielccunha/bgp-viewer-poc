@@ -37,4 +37,6 @@ ws.onopen = () => {
       data: connectionParams
     })
   )
+
+  console.log('Successfully started \x1b[33mlistener\x1b[0m‎‎ ')
 }
