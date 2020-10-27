@@ -6,6 +6,7 @@
   "author": "Daniel Cunha <danielcunha54@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "dev": "npm-run-all -p dev:*",
     "dev:listener": "tsnd --quiet --respawn --transpile-only --ignore-watch node_modules --no-notify src/listener.ts"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
     "git-commit-msg-linter": "^3.0.0",
     "husky": "^4.3.0",
     "lint-staged": "^10.4.2",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.1.2",
     "ts-node-dev": "^1.0.0",
     "typescript": "^4.0.3"
