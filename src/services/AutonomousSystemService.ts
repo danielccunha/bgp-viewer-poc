@@ -1,38 +1,54 @@
 import Announcement from '../database/entities/Announcement'
 import AutonomousSystem from '../database/entities/AutonomousSystem'
+import Neighbor from '../database/entities/Neighbor'
 
-interface SimplifiedAS {
+interface AutonomousSystemWrapper {
   id: string
-  peer: string
   number: number
+  peer?: string
+  announcements?: number[]
+  neighborhood?: number[]
 }
 
-interface CompleteAS extends SimplifiedAS {
-  announcements: number[]
-}
-
-export async function fetchAll(): Promise<SimplifiedAS[]> {
+export async function fetchAll(): Promise<AutonomousSystemWrapper[]> {
   const autonomousSystems = await AutonomousSystem.find()
   return autonomousSystems.map(as => ({
-    id: as._id,
+    id: as.id,
     peer: as.peer,
     number: as.number
   }))
 }
 
-export async function findOne(id: string): Promise<CompleteAS> {
-  const autonomousSystem = await AutonomousSystem.findById(id)
-  if (!autonomousSystem) return null
+export async function findById(id: string): Promise<AutonomousSystemWrapper> {
+  const as = await AutonomousSystem.findById(id).lean()
+  if (!as) {
+    return null
+  }
 
-  const announcements = await Announcement.find(
-    { to: autonomousSystem.number },
-    { from: 1 }
-  ).lean()
+  const announcements = await findAnnouncements(as.number)
+  const neighborhood = await findNeighborhood(as.number)
 
   return {
-    id: autonomousSystem._id,
-    peer: autonomousSystem.peer,
-    number: autonomousSystem.number,
-    announcements: [...new Set(announcements.map(as => as.from))]
+    id: as._id,
+    number: as.number,
+    peer: as.peer,
+    announcements,
+    neighborhood
   }
+}
+
+async function findAnnouncements(asn: number): Promise<number[]> {
+  const announcements = await Announcement.find({ to: asn }, { from: 1 }).lean()
+  const fromASNs = announcements.map(as => as.from).sort()
+  return [...new Set(fromASNs)]
+}
+
+async function findNeighborhood(asn: number): Promise<number[]> {
+  const fromASNs = await Neighbor.find({ from: asn }).lean()
+  const toASNs = await Neighbor.find({ to: asn }).lean()
+  const mappedASNs = [
+    ...fromASNs.map(as => as.to),
+    ...toASNs.map(as => as.from)
+  ].sort()
+  return [...new Set(mappedASNs)]
 }
