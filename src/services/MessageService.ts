@@ -85,7 +85,7 @@ export class MessageService {
   private async storeAnnouncement({ from, to }: Relation) {
     await Announcement.findOneAndUpdate(
       { from, to },
-      { from, to },
+      { from, to, updatedAt: new Date() },
       { upsert: true }
     )
   }
@@ -96,7 +96,7 @@ export class MessageService {
 
     await Neighbor.findOneAndUpdate(
       { from, to },
-      { from, to },
+      { from, to, updatedAt: new Date() },
       { upsert: true }
     )
   }
